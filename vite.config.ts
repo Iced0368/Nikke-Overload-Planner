@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-const GITHUB_PAGES_BASE = "/Nikke-Overload-Planner-Ex/";
+const GITHUB_PAGES_BASE = "/Nikke-Overload-Planner-Engine/";
 
 const packageJson = JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf-8")) as {
   version: string;

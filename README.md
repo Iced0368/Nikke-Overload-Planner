@@ -4,7 +4,7 @@
 
 <br/>
 
-https://iced0368.github.io/Nikke-Overload-Planner-Ex/
+https://iced0368.github.io/Nikke-Overload-Planner-Engine/
 
 <br/>
 
@@ -85,7 +85,7 @@ npm run lint
 
 - main 브랜치에 푸시하면 자동으로 빌드 후 배포
 - Actions 탭에서 수동 실행도 가능
-- 배포 대상 URL: https://iced0368.github.io/Nikke-Overload-Planner-Ex/
+- 배포 대상 URL: https://iced0368.github.io/Nikke-Overload-Planner-Engine/
 
 ### 최초 1회 설정
 
