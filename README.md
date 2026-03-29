@@ -1,73 +1,197 @@
-# React + TypeScript + Vite
+# Nikke Equip Overload
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+니케 오버로드 옵션 세팅에서 현재 상태를 기준으로 목표 조합까지의 기대 소모량과 최적 리롤 행동을 계산하는 웹 플래너입니다.
 
-Currently, two official plugins are available:
+이 프로젝트는 단순 조합 나열기가 아니라, 각 상태에서 어떤 행동이 가장 유리한지 동적 계획법으로 계산한 뒤, 필요하면 몬테카를로 시뮬레이션으로 결과를 교차 검증합니다.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 주요 기능
 
-## React Compiler
+- 현재 장비 상태 3슬롯의 옵션, 등급, 시작 모듈 잠금 상태 입력
+- 목표 상태를 여러 개 등록하고 같은 옵션 조합의 순열을 한 번에 추가
+- 목표 옵션별 최소 등급 설정
+- 모듈과 락키의 상대 가치를 조절해 가중 비용 기준 변경
+- Web Worker 기반 최적화 실행으로 UI 멈춤 최소화
+- 상태별 권장 행동 제공
+  - 효과 변경
+  - 수치 재설정
+  - 모듈 잠금 / 락키 잠금 조합
+- 기대 비용과 상세 시뮬레이션 결과 비교
+  - 가중 평균 비용
+  - 순수 모듈 소모량
+  - 순수 락키 소모량
+- 누적 분포 차트와 종료 상태 분포 시각화
+- 목표 상태, 목표 등급, 비용 가중치 로컬 저장
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 기술 스택
 
-## Expanding the ESLint configuration
+- React 19
+- TypeScript
+- Vite
+- Recharts
+- Web Worker
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 시작하기
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 요구 사항
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- Node.js 20 이상 권장
+- npm 10 이상 권장
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 설치
+
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 개발 서버 실행
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+
+기본적으로 Vite 개발 서버가 실행되며, 브라우저에서 안내되는 로컬 주소로 접속하면 됩니다.
+
+### 빌드
+
+```bash
+npm run build
+```
+
+### 미리보기
+
+```bash
+npm run preview
+```
+
+### 린트
+
+```bash
+npm run lint
+```
+
+## 사용 방법
+
+### 1. 현재 상태 입력
+
+현재 장비의 3개 슬롯에 대해 아래 값을 설정합니다.
+
+- 옵션 종류
+- 현재 등급
+- 이미 적용된 시작 모듈 잠금 여부
+
+시작 모듈 잠금은 실제 현재 상태를 반영하는 값입니다. 옵션이 없는 슬롯은 잠글 수 없고, 동시에 3개 슬롯 잠금은 허용되지 않습니다.
+
+### 2. 목표 상태 등록
+
+도달하고 싶은 목표 옵션 조합을 하나 이상 추가합니다.
+
+- 빈 슬롯을 포함한 부분 목표도 가능
+- 같은 옵션 조합의 배치 순서까지 허용하고 싶다면 동일 옵션 추가 버튼으로 순열을 확장 가능
+
+예를 들어 A/B/C 조합을 슬롯 순서와 무관하게 인정하고 싶다면, 한 개만 넣는 대신 순열을 함께 등록해야 합니다.
+
+### 3. 옵션별 목표 등급 설정
+
+목표 상태에 포함된 각 옵션마다 최소 목표 등급을 지정합니다.
+
+이 등급 조건은 옵션 타입 기준으로 적용됩니다. 즉 같은 옵션이 여러 목표 상태에 등장하면 동일한 목표 등급 기준을 공유합니다.
+
+### 4. 비용 가치 조정
+
+내부 계산은 모듈과 락키를 각각 따로 추적하면서도, 최적화 판단에는 가중 비용을 함께 사용합니다.
+
+- 모듈 비용은 기본 1
+- 락키 비용은 모듈 대비 상대 가치로 환산
+- 화면에서는 모듈 1개를 락키 몇 개로 볼지 입력
+
+예를 들어 모듈 1개를 락키 50개와 같게 보면, 락키 1개의 내부 가중치는 0.02가 됩니다.
+
+### 5. 최적화 실행
+
+최적화 실행 버튼을 누르면 Web Worker에서 정책 계산이 수행됩니다.
+
+결과 패널에서는 다음 정보를 확인할 수 있습니다.
+
+- 현재 상태 기준 기대 비용
+- 권장 행동 종류
+- 잠금 없이 진행할지, 특정 슬롯을 모듈 잠금 / 락키 잠금할지
+- 최적화 진행률
+
+### 6. 상세 시뮬레이션 실행
+
+최적화가 끝난 뒤 상세 시뮬레이션을 실행하면, 계산된 정책을 실제 확률 샘플링으로 반복 검증한 결과를 볼 수 있습니다.
+
+여기서 확인할 수 있는 내용은 다음과 같습니다.
+
+- 동적 계획법 기대값과 시뮬레이션 평균 비교
+- 누적 비용 분포
+- 종료 상태 그룹 분포
+- 표준 오차 기반 신뢰도 확인
+
+## 결과 해석
+
+### 가중 비용
+
+모듈과 락키를 하나의 기준으로 합친 내부 최적화 점수입니다. 비용 가치 설정에 따라 숫자가 달라집니다.
+
+### 순수 모듈 / 순수 락키
+
+실제 자원 종류별 기대 소모량입니다. 가중 비용과 별개로 확인하는 지표입니다.
+
+### 권장 행동
+
+- 효과 변경: 옵션 자체를 다시 뽑는 행동
+- 수치 재설정: 현재 옵션은 유지하고 등급 수치만 다시 굴리는 행동
+- 목표 달성: 이미 목표를 만족하는 상태
+
+### 잠금 추천
+
+권장 행동과 함께 어떤 슬롯을 모듈 잠금 또는 락키 잠금하는 편이 유리한지 제안합니다. 이 값은 현재 상태와 목표 조합 전체를 고려한 결과입니다.
+
+## 계산 모델 메모
+
+- 옵션 종류별 등장 확률은 [src/lib/overloadOptions.ts](src/lib/overloadOptions.ts)에 정의되어 있습니다.
+- 등급 확률도 같은 파일에 고정값으로 정의되어 있습니다.
+- 목표 달성 조건은 옵션 일치와 목표 등급 충족을 함께 만족해야 합니다.
+- 내부 최적화는 반복 기반 정책 개선 방식으로 수행됩니다.
+- UI의 최적화 계산은 워커에서, 결과 검증은 시뮬레이션 엔진에서 처리됩니다.
+
+게임 내 수치나 확률 체계가 바뀌면 입력 UI가 아니라 계산 상수부터 먼저 갱신해야 합니다.
+
+## 상태 저장
+
+브라우저 로컬 스토리지에 아래 항목을 저장합니다.
+
+- 목표 상태 목록
+- 옵션별 목표 등급
+- 비용 가중치 설정
+
+새로고침 후에도 위 값은 유지되지만, 세션이나 브라우저 환경을 바꾸면 공유되지 않습니다.
+
+## 프로젝트 구조
+
+```text
+src/
+  features/overload-planner/
+    components/        UI 구성 요소
+    hooks/             플래너 상태 관리와 워커 연결
+    model/             UI 입력 모델과 보조 함수
+    workers/           최적화 / 시뮬레이션 워커 메시지 처리
+  lib/
+    overloadOptions.ts         확률, 비용, 옵션 정의
+    overloadPolicyOptimizer.ts 정책 최적화 엔진
+    overloadMonteCarlo.ts      몬테카를로 검증 엔진
+```
+
+## 스크립트
+
+| 명령              | 설명                       |
+| ----------------- | -------------------------- |
+| `npm run dev`     | 개발 서버 실행             |
+| `npm run build`   | 타입 체크 후 프로덕션 빌드 |
+| `npm run preview` | 빌드 결과 로컬 미리보기    |
+| `npm run lint`    | ESLint 실행                |
+
+## 참고
+
+이 저장소는 특정 니케 오버로드 세팅을 빠르게 평가하기 위한 계산 도구입니다. 실제 게임 내 업데이트로 확률, 비용, 잠금 규칙이 변경되면 결과도 달라질 수 있으므로, 관련 상수와 규칙을 함께 점검해야 합니다.
