@@ -2,6 +2,20 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      (function () {
+        const isGitHubPages = window.location.hostname === "iced0368.github.io";
+        const repositoryBase = "/Nikke-Overload-Planner/";
+        const base = document.createElement("base");
+
+        base.href = isGitHubPages ? repositoryBase : "/";
+        document.head.appendChild(base);
+
+        if (isGitHubPages && window.location.pathname === repositoryBase.slice(0, -1)) {
+          window.location.replace(`${repositoryBase}${window.location.search}${window.location.hash}`);
+        }
+      })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="./vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nikke Overload Planner | 니케 오버로드 최적화 플래너</title>
